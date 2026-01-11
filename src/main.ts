@@ -126,6 +126,18 @@ function setupEventListeners(): void {
     prevCustomerCount = 0;
   });
 
+  // Sink - discard tea
+  document.getElementById('sink')!.addEventListener('click', () => {
+    if (state.servingFromStation === null) return;
+
+    const station = state.stations[state.servingFromStation];
+    if (station && station.cupState === 'ready') {
+      audio.playDiscard();
+      resetCup(station);
+      state.servingFromStation = null;
+    }
+  });
+
   // Upgrade purchases - use document level to ensure it works
   document.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;

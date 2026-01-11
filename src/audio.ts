@@ -177,3 +177,11 @@ export function playUnpause(): void {
   playTone(400, 0.1, 'square', 0.2);
   setTimeout(() => playTone(600, 0.15, 'square', 0.2), 80);
 }
+
+export function playDiscard(): void {
+  // Pouring down drain sound
+  playNoise(0.3, 0.1);
+  playTone(200, 0.15, 'triangle', 0.15);
+  setTimeout(() => playTone(150, 0.15, 'triangle', 0.1), 100);
+  setTimeout(() => playTone(100, 0.2, 'triangle', 0.08), 200);
+}

@@ -42,6 +42,16 @@ function renderHeader(state: GameState): void {
 function renderCustomers(state: GameState): void {
   const slots = document.querySelectorAll('.customer-slot');
 
+  // Update sink active state
+  const sink = document.getElementById('sink');
+  if (sink) {
+    if (state.servingFromStation !== null) {
+      sink.classList.add('active');
+    } else {
+      sink.classList.remove('active');
+    }
+  }
+
   slots.forEach((slot, index) => {
     const customer = state.customers[index];
     const slotEl = slot as HTMLElement;
