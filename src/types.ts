@@ -30,7 +30,7 @@ export interface Customer {
   maxPatience: number;
 }
 
-export type GamePhase = 'playing' | 'shopping';
+export type GamePhase = 'playing' | 'shopping' | 'paused';
 
 export interface GameState {
   phase: GamePhase;

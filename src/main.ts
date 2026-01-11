@@ -115,10 +115,20 @@ function setupEventListeners(): void {
     }
   });
 
-  // Cancel serving mode on escape
+  // Keyboard controls
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       state.servingFromStation = null;
+    }
+
+    // Pause/unpause with P or Space (only during playing or paused)
+    if (e.key === 'p' || e.key === 'P' || e.key === ' ') {
+      e.preventDefault();
+      if (state.phase === 'playing') {
+        state.phase = 'paused';
+      } else if (state.phase === 'paused') {
+        state.phase = 'playing';
+      }
     }
   });
 }

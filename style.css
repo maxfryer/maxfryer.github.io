@@ -378,6 +378,81 @@ body {
 .addition[data-action="sugar"] { color: #fff; }
 .addition[data-action="milk"] { color: var(--milk); }
 
+/* Pause Screen */
+#pause {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+
+#pause.hidden {
+  display: none;
+}
+
+#pause h2 {
+  font-size: 24px;
+  color: var(--gold);
+  margin-bottom: 24px;
+}
+
+#pause .instructions {
+  background: var(--bg-medium);
+  border: 4px solid var(--bg-light);
+  padding: 20px;
+  max-width: 500px;
+  font-size: 10px;
+  line-height: 1.8;
+}
+
+#pause .instructions h3 {
+  color: var(--gold);
+  margin: 16px 0 8px 0;
+  font-size: 12px;
+}
+
+#pause .instructions h3:first-child {
+  margin-top: 0;
+}
+
+#pause .instructions p {
+  margin-bottom: 12px;
+  color: var(--text-dim);
+}
+
+#pause .instructions ol,
+#pause .instructions ul {
+  margin-left: 20px;
+}
+
+#pause .instructions li {
+  margin-bottom: 6px;
+}
+
+#pause .instructions strong {
+  color: var(--accent);
+}
+
+#pause .resume-hint {
+  margin-top: 24px;
+  font-size: 10px;
+  color: var(--text-dim);
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
 /* Shop */
 #shop {
   position: fixed;

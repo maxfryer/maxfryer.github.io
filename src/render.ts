@@ -9,6 +9,14 @@ export function renderGame(state: GameState): void {
   renderCustomers(state);
   renderStations(state);
 
+  // Show/hide pause screen
+  const pause = document.getElementById('pause')!;
+  if (state.phase === 'paused') {
+    pause.classList.remove('hidden');
+  } else {
+    pause.classList.add('hidden');
+  }
+
   // Show/hide shop
   const shop = document.getElementById('shop')!;
   if (state.phase === 'shopping') {
@@ -137,7 +145,7 @@ function renderStation(station: Station, el: HTMLElement, isServing: boolean): v
 }
 
 function renderShop(state: GameState): void {
-  document.getElementById('shop-tips')!.textContent = `Today: $${state.dayTips} | Total: $${state.tips}`;
+  document.getElementById('shop-tips')!.textContent = `Tips: $${state.tips}`;
 
   const upgradesEl = document.getElementById('upgrades')!;
   upgradesEl.innerHTML = '';
