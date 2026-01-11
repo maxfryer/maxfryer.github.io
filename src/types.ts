@@ -30,7 +30,10 @@ export interface Customer {
   maxPatience: number;
 }
 
-export type GamePhase = 'playing' | 'shopping' | 'paused';
+export type GamePhase = 'playing' | 'shopping' | 'paused' | 'gameover' | 'won';
+
+export const MAX_DAYS = 4;
+export const MAX_WRONG_ORDERS = 2;
 
 export interface GameState {
   phase: GamePhase;
@@ -40,6 +43,7 @@ export interface GameState {
   dayTimer: number;
   customersServed: number;
   customersTotal: number;
+  wrongOrdersToday: number;
   stations: Station[];
   customers: Customer[];
   servingFromStation: number | null;

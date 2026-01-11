@@ -5,6 +5,7 @@ import { serveCustomer } from './customer';
 import { UPGRADES } from './upgrades';
 import { renderGame, showTipPopup, refreshShop } from './render';
 import * as audio from './audio';
+import { toggleMute } from './audio';
 
 let state: GameState;
 let lastTime = 0;
@@ -168,6 +169,17 @@ function setupEventListeners(): void {
   document.getElementById('restart-yes')!.addEventListener('click', confirmRestart);
   document.getElementById('restart-no')!.addEventListener('click', cancelRestart);
 
+  // Game over and win restart buttons
+  document.getElementById('gameover-restart-btn')!.addEventListener('click', confirmRestart);
+  document.getElementById('win-restart-btn')!.addEventListener('click', confirmRestart);
+
+  // Mute button
+  const muteBtn = document.getElementById('mute-btn')!;
+  muteBtn.addEventListener('click', () => {
+    const muted = toggleMute();
+    muteBtn.textContent = muted ? 'Sound: OFF' : 'Sound: ON';
+  });
+
   function showRestart(): void {
     showRestartConfirm = true;
     restartConfirm.classList.remove('hidden');
@@ -203,26 +215,32 @@ function setupEventListeners(): void {
       return;
     }
 
-    if (e.key === 'Escape') {
-      state.servingFromStation = null;
-    }
-
-    // Pause/unpause with P or Space (only during playing or paused)
-    if (e.key === 'p' || e.key === 'P' || e.key === ' ') {
+    // Pause/unpause with P, Space, or Escape (only during playing or paused)
+    if (e.key === 'p' || e.key === 'P' || e.key === ' ' || e.key === 'Escape') {
       e.preventDefault();
       if (state.phase === 'playing') {
-        state.phase = 'paused';
-        audio.playPause();
+        // Cancel serving mode first, or pause if not serving
+        if (e.key === 'Escape' && state.servingFromStation !== null) {
+          state.servingFromStation = null;
+        } else {
+          state.phase = 'paused';
+          audio.playPause();
+        }
       } else if (state.phase === 'paused') {
         state.phase = 'playing';
         audio.playUnpause();
       }
     }
 
-    // Restart with R (not during shop)
-    if ((e.key === 'r' || e.key === 'R') && state.phase !== 'shopping') {
+    // Restart with R
+    if (e.key === 'r' || e.key === 'R') {
       e.preventDefault();
-      showRestart();
+      // Immediate restart from game over or win screens
+      if (state.phase === 'gameover' || state.phase === 'won') {
+        confirmRestart();
+      } else if (state.phase !== 'shopping') {
+        showRestart();
+      }
     }
   });
 }

@@ -1,6 +1,6 @@
-import { GameState } from './types';
+import { GameState, MAX_DAYS } from './types';
 import { createStation, updateStation, resetCup } from './station';
-import { updateCustomers, getCustomersPerDay, createCustomer } from './customer';
+import { updateCustomers, getCustomersPerDay } from './customer';
 
 const DAY_DURATION = 180; // 3 minutes per day
 
@@ -13,6 +13,7 @@ export function createGameState(): GameState {
     dayTimer: DAY_DURATION,
     customersServed: 0,
     customersTotal: getCustomersPerDay(1),
+    wrongOrdersToday: 0,
     stations: [createStation(0), createStation(1)],
     customers: [],
     servingFromStation: null,
@@ -45,12 +46,19 @@ export function endDay(state: GameState): void {
 }
 
 export function startNextDay(state: GameState): void {
+  // Check if player has won after completing all days
+  if (state.day >= MAX_DAYS) {
+    state.phase = 'won';
+    return;
+  }
+
   state.day++;
   state.phase = 'playing';
   state.dayTimer = DAY_DURATION;
   state.dayTips = 0;
   state.customersServed = 0;
   state.customersTotal = getCustomersPerDay(state.day);
+  state.wrongOrdersToday = 0;
   state.customers = [];
   state.servingFromStation = null;
 

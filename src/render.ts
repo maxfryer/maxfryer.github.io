@@ -1,6 +1,6 @@
-import { GameState, Station } from './types';
+import { GameState, Station, MAX_DAYS, MAX_WRONG_ORDERS } from './types';
 import { getKettleStatusText, getCupStatusText } from './station';
-import { getOrderDisplayName } from './customer';
+import { getOrderDisplayName, getMaxQueueSize } from './customer';
 import { UPGRADES, canAffordUpgrade } from './upgrades';
 import { formatTime } from './game';
 
@@ -27,6 +27,29 @@ export function renderGame(state: GameState): void {
   } else {
     shop.classList.add('hidden');
   }
+
+  // Show/hide game over screen
+  const gameover = document.getElementById('gameover')!;
+  if (state.phase === 'gameover') {
+    if (gameover.classList.contains('hidden')) {
+      gameover.classList.remove('hidden');
+      document.getElementById('gameover-day')!.textContent = String(state.day);
+      document.getElementById('gameover-tips')!.textContent = String(state.tips);
+    }
+  } else {
+    gameover.classList.add('hidden');
+  }
+
+  // Show/hide win screen
+  const win = document.getElementById('win')!;
+  if (state.phase === 'won') {
+    if (win.classList.contains('hidden')) {
+      win.classList.remove('hidden');
+      document.getElementById('win-tips')!.textContent = String(state.tips);
+    }
+  } else {
+    win.classList.add('hidden');
+  }
 }
 
 export function refreshShop(state: GameState): void {
@@ -34,13 +57,22 @@ export function refreshShop(state: GameState): void {
 }
 
 function renderHeader(state: GameState): void {
-  document.getElementById('day-display')!.textContent = `Day ${state.day}`;
+  document.getElementById('day-display')!.textContent = `Day ${state.day}/${MAX_DAYS}`;
   document.getElementById('tips-display')!.textContent = `Tips: $${state.tips}`;
   document.getElementById('time-display')!.textContent = `Time: ${formatTime(state.dayTimer)}`;
+
+  // Show complaints as X icons
+  const complaintsEl = document.getElementById('complaints-display');
+  if (complaintsEl) {
+    const filled = '<span class="complaint filled">X</span>'.repeat(state.wrongOrdersToday);
+    const empty = '<span class="complaint">X</span>'.repeat(MAX_WRONG_ORDERS - state.wrongOrdersToday);
+    complaintsEl.innerHTML = '<span class="complaints-label">Complaints:</span>' + filled + empty;
+  }
 }
 
 function renderCustomers(state: GameState): void {
   const slots = document.querySelectorAll('.customer-slot');
+  const maxQueue = getMaxQueueSize(state.day);
 
   // Update sink active state
   const sink = document.getElementById('sink');
@@ -55,6 +87,16 @@ function renderCustomers(state: GameState): void {
   slots.forEach((slot, index) => {
     const customer = state.customers[index];
     const slotEl = slot as HTMLElement;
+
+    // Check if slot is unavailable for this day
+    if (index >= maxQueue) {
+      slotEl.classList.add('unavailable');
+      slotEl.classList.remove('occupied', 'serving-mode');
+      slotEl.innerHTML = '<div class="slot-locked">?</div>';
+      return;
+    }
+
+    slotEl.classList.remove('unavailable');
 
     if (customer) {
       slotEl.classList.add('occupied');
@@ -85,6 +127,16 @@ function renderCustomers(state: GameState): void {
 
 function renderStations(state: GameState): void {
   const stationsEl = document.getElementById('stations')!;
+
+  // Show/hide locked station 3 placeholder
+  const lockedStation3 = document.getElementById('station-3-locked');
+  if (lockedStation3) {
+    if (state.upgrades.includes('third_station')) {
+      lockedStation3.classList.add('hidden');
+    } else {
+      lockedStation3.classList.remove('hidden');
+    }
+  }
 
   // Add third station HTML if needed
   if (state.upgrades.includes('third_station') && !document.querySelector('[data-station="2"]')) {

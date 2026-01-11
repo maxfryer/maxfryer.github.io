@@ -1,4 +1,14 @@
 let audioCtx: AudioContext | null = null;
+let muted = false;
+
+export function isMuted(): boolean {
+  return muted;
+}
+
+export function toggleMute(): boolean {
+  muted = !muted;
+  return muted;
+}
 
 function getAudioContext(): AudioContext {
   if (!audioCtx) {
@@ -13,6 +23,7 @@ function playTone(
   type: OscillatorType = 'square',
   volume: number = 0.3
 ): void {
+  if (muted) return;
   const ctx = getAudioContext();
   const oscillator = ctx.createOscillator();
   const gainNode = ctx.createGain();
@@ -31,6 +42,7 @@ function playTone(
 }
 
 function playNoise(duration: number, volume: number = 0.1): void {
+  if (muted) return;
   const ctx = getAudioContext();
   const bufferSize = ctx.sampleRate * duration;
   const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
