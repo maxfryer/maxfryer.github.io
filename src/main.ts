@@ -4,10 +4,17 @@ import { clickKettle, clickTeabag, clickSugar, clickMilk, resetCup } from './sta
 import { serveCustomer } from './customer';
 import { purchaseUpgrade } from './upgrades';
 import { renderGame, showTipPopup } from './render';
+import * as audio from './audio';
 
 let state: GameState;
 let lastTime = 0;
 let showRestartConfirm = false;
+
+// Track previous states for sound triggers
+let prevKettleStates: string[] = [];
+let prevCupStates: string[] = [];
+let prevCustomerCount = 0;
+let prevPhase: string = 'playing';
 
 function init(): void {
   state = createGameState();
@@ -42,20 +49,39 @@ function setupEventListeners(): void {
 
     switch (actionType) {
       case 'kettle':
+        const prevKettleState = station.kettleState;
         clickKettle(station, state);
+        // Play sound based on new state
+        if (prevKettleState === 'empty' && station.kettleState === 'filling') {
+          audio.playKettleFill();
+        } else if (prevKettleState === 'full' && station.kettleState === 'boiling') {
+          audio.playKettleBoil();
+        } else if (prevKettleState === 'ready' && station.cupState === 'steeping') {
+          audio.playPourWater();
+        }
         break;
       case 'teabag':
         const teaType = (action as HTMLElement).dataset.tea as TeaType;
+        if (station.cupState === 'empty') {
+          audio.playAddTeabag();
+        }
         clickTeabag(station, teaType);
         break;
       case 'sugar':
+        if (station.cupState === 'steeping' || station.cupState === 'ready') {
+          audio.playAddSugar();
+        }
         clickSugar(station);
         break;
       case 'milk':
+        if ((station.cupState === 'steeping' || station.cupState === 'ready') && !station.hasMilk) {
+          audio.playAddMilk();
+        }
         clickMilk(station);
         break;
       case 'cup':
         if (station.cupState === 'ready') {
+          audio.playClick();
           if (state.servingFromStation === stationIndex) {
             // Cancel serving mode
             state.servingFromStation = null;
@@ -83,6 +109,9 @@ function setupEventListeners(): void {
     const stationIndex = state.servingFromStation;
     const tip = serveCustomer(state, slotIndex);
 
+    // Play serve sound based on tip
+    audio.playServeTea(tip);
+
     // Show tip popup
     const rect = slot.getBoundingClientRect();
     showTipPopup(tip, rect.left + rect.width / 2, rect.top);
@@ -97,7 +126,10 @@ function setupEventListeners(): void {
 
     // Next day button
     if (target.id === 'next-day-btn' || target.closest('#next-day-btn')) {
+      audio.playClick();
       startNextDay(state);
+      // Reset customer count tracker for new day
+      prevCustomerCount = 0;
       return;
     }
 
@@ -109,7 +141,10 @@ function setupEventListeners(): void {
       if (!isOwned && !isLocked) {
         const upgradeId = upgradeEl.dataset.upgradeId as UpgradeId;
         if (upgradeId) {
-          purchaseUpgrade(state, upgradeId);
+          const success = purchaseUpgrade(state, upgradeId);
+          if (success) {
+            audio.playUpgradeBuy();
+          }
           renderGame(state);
         }
       }
@@ -135,6 +170,11 @@ function setupEventListeners(): void {
     showRestartConfirm = false;
     restartConfirm.classList.add('hidden');
     state = createGameState();
+    // Reset audio state trackers
+    prevKettleStates = [];
+    prevCupStates = [];
+    prevCustomerCount = 0;
+    prevPhase = 'playing';
   }
 
   // Keyboard controls
@@ -178,8 +218,44 @@ function gameLoop(time: number): void {
   lastTime = time;
 
   if (state.phase === 'playing') {
+    // Store previous states before update
+    const prevCustomerIds = state.customers.map(c => c.id);
+
     updateGame(state, dt);
+
+    // Check for kettle ready sounds
+    state.stations.forEach((station, i) => {
+      if (prevKettleStates[i] === 'boiling' && station.kettleState === 'ready') {
+        audio.playKettleReady();
+      }
+      if (prevCupStates[i] === 'steeping' && station.cupState === 'ready') {
+        audio.playSteepComplete();
+      }
+      prevKettleStates[i] = station.kettleState;
+      prevCupStates[i] = station.cupState;
+    });
+
+    // Check for customer arrivals
+    if (state.customers.length > prevCustomerCount) {
+      audio.playCustomerArrive();
+    }
+
+    // Check for customer departures (patience ran out)
+    const currentIds = state.customers.map(c => c.id);
+    const leftCustomers = prevCustomerIds.filter(id => !currentIds.includes(id));
+    if (leftCustomers.length > 0 && state.phase === 'playing') {
+      // Only play if they left due to patience (not serving)
+      audio.playCustomerLeave();
+    }
+
+    prevCustomerCount = state.customers.length;
   }
+
+  // Check for phase changes
+  if (prevPhase === 'playing' && state.phase === 'shopping') {
+    audio.playDayEnd();
+  }
+  prevPhase = state.phase;
 
   renderGame(state);
   requestAnimationFrame(gameLoop);
