@@ -99,6 +99,7 @@ function renderStations(state: GameState): void {
           <div class="cup" data-action="cup">
             <div class="cup-body">
               <div class="cup-contents"></div>
+              <div class="sugar-crystals"></div>
             </div>
             <div class="cup-status">Empty</div>
           </div>
@@ -149,6 +150,9 @@ function renderStation(station: Station, el: HTMLElement, isServing: boolean): v
   }
   if (station.hasMilk) {
     cupClasses += ' has-milk';
+  }
+  if (station.sugarCount > 0) {
+    cupClasses += ' has-sugar';
   }
   if (station.cupState === 'ready') {
     cupClasses += ' ready';

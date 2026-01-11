@@ -1,6 +1,6 @@
 import { GameState } from './types';
 import { createStation, updateStation, resetCup } from './station';
-import { updateCustomers, getCustomersPerDay } from './customer';
+import { updateCustomers, getCustomersPerDay, createCustomer } from './customer';
 
 const DAY_DURATION = 180; // 3 minutes per day
 
