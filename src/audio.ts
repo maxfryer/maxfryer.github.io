@@ -165,3 +165,15 @@ export function playClick(): void {
   // Simple UI click
   playTone(800, 0.05, 'square', 0.15);
 }
+
+export function playPause(): void {
+  // Descending tone - game stopping
+  playTone(600, 0.1, 'square', 0.2);
+  setTimeout(() => playTone(400, 0.15, 'square', 0.2), 80);
+}
+
+export function playUnpause(): void {
+  // Ascending tone - game resuming
+  playTone(400, 0.1, 'square', 0.2);
+  setTimeout(() => playTone(600, 0.15, 'square', 0.2), 80);
+}

@@ -30,7 +30,6 @@ function init(): void {
 function setupEventListeners(): void {
   const stationsEl = document.getElementById('stations')!;
   const customersEl = document.getElementById('customer-queue')!;
-  const shopEl = document.getElementById('shop')!;
 
   // Station clicks
   stationsEl.addEventListener('click', (e) => {
@@ -120,34 +119,30 @@ function setupEventListeners(): void {
     resetCup(state.stations[stationIndex]);
   });
 
-  // Shop clicks
-  shopEl.addEventListener('click', (e) => {
+  // Next day button
+  document.getElementById('next-day-btn')!.addEventListener('click', () => {
+    audio.playClick();
+    startNextDay(state);
+    prevCustomerCount = 0;
+  });
+
+  // Upgrade purchases
+  document.getElementById('upgrades')!.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
-
-    // Next day button
-    if (target.id === 'next-day-btn' || target.closest('#next-day-btn')) {
-      audio.playClick();
-      startNextDay(state);
-      // Reset customer count tracker for new day
-      prevCustomerCount = 0;
-      return;
-    }
-
-    // Upgrade purchase
     const upgradeEl = target.closest('.upgrade') as HTMLElement;
-    if (upgradeEl) {
-      const isOwned = upgradeEl.classList.contains('owned');
-      const isLocked = upgradeEl.classList.contains('locked');
-      if (!isOwned && !isLocked) {
-        const upgradeId = upgradeEl.dataset.upgradeId as UpgradeId;
-        if (upgradeId) {
-          const success = purchaseUpgrade(state, upgradeId);
-          if (success) {
-            audio.playUpgradeBuy();
-          }
-          renderGame(state);
-        }
+    if (!upgradeEl) return;
+
+    const isOwned = upgradeEl.classList.contains('owned');
+    const isLocked = upgradeEl.classList.contains('locked');
+    if (isOwned || isLocked) return;
+
+    const upgradeId = upgradeEl.dataset.upgradeId as UpgradeId;
+    if (upgradeId) {
+      const success = purchaseUpgrade(state, upgradeId);
+      if (success) {
+        audio.playUpgradeBuy();
       }
+      renderGame(state);
     }
   });
 
@@ -200,8 +195,10 @@ function setupEventListeners(): void {
       e.preventDefault();
       if (state.phase === 'playing') {
         state.phase = 'paused';
+        audio.playPause();
       } else if (state.phase === 'paused') {
         state.phase = 'playing';
+        audio.playUnpause();
       }
     }
 

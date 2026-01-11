@@ -568,6 +568,10 @@ body {
   border-color: var(--gold);
 }
 
+.upgrade * {
+  pointer-events: none;
+}
+
 .upgrade.owned {
   border-color: var(--gold);
   opacity: 0.5;

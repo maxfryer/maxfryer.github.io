@@ -13,10 +13,10 @@ export function createGameState(): GameState {
     dayTimer: DAY_DURATION,
     customersServed: 0,
     customersTotal: getCustomersPerDay(1),
-    stations: [createStation(0), createStation(1)],
+    stations: [createStation(0), createStation(1), createStation(2)],
     customers: [],
     servingFromStation: null,
-    upgrades: []
+    upgrades: ['faster_kettle', 'third_station', 'patience_boost', 'premium_cups']
   };
 }
 
