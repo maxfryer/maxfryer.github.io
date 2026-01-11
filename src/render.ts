@@ -20,11 +20,17 @@ export function renderGame(state: GameState): void {
   // Show/hide shop
   const shop = document.getElementById('shop')!;
   if (state.phase === 'shopping') {
-    shop.classList.remove('hidden');
-    renderShop(state);
+    if (shop.classList.contains('hidden')) {
+      shop.classList.remove('hidden');
+      renderShop(state);
+    }
   } else {
     shop.classList.add('hidden');
   }
+}
+
+export function refreshShop(state: GameState): void {
+  renderShop(state);
 }
 
 function renderHeader(state: GameState): void {

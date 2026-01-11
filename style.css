@@ -574,12 +574,21 @@ body {
 
 .upgrade.owned {
   border-color: var(--gold);
-  opacity: 0.5;
+  background: var(--bg-light);
 }
 
 .upgrade.locked {
-  opacity: 0.3;
+  opacity: 0.4;
   cursor: not-allowed;
+}
+
+.upgrade-cost {
+  color: var(--accent);
+  margin-top: 4px;
+}
+
+.upgrade.owned .upgrade-cost {
+  color: var(--gold);
 }
 
 .upgrade-name {

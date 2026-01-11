@@ -2,8 +2,8 @@ import { GameState, TeaType, UpgradeId } from './types';
 import { createGameState, updateGame, startNextDay } from './game';
 import { clickKettle, clickTeabag, clickSugar, clickMilk, resetCup } from './station';
 import { serveCustomer } from './customer';
-import { purchaseUpgrade } from './upgrades';
-import { renderGame, showTipPopup } from './render';
+import { UPGRADES } from './upgrades';
+import { renderGame, showTipPopup, refreshShop } from './render';
 import * as audio from './audio';
 
 let state: GameState;
@@ -126,23 +126,28 @@ function setupEventListeners(): void {
     prevCustomerCount = 0;
   });
 
-  // Upgrade purchases
-  document.getElementById('upgrades')!.addEventListener('click', (e) => {
+  // Upgrade purchases - use document level to ensure it works
+  document.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
+
+    // Check if click is inside upgrades area
+    if (!target.closest('#upgrades')) return;
+
     const upgradeEl = target.closest('.upgrade') as HTMLElement;
     if (!upgradeEl) return;
 
-    const isOwned = upgradeEl.classList.contains('owned');
-    const isLocked = upgradeEl.classList.contains('locked');
-    if (isOwned || isLocked) return;
+    // Don't allow purchasing owned or locked upgrades
+    if (upgradeEl.classList.contains('owned') || upgradeEl.classList.contains('locked')) return;
 
     const upgradeId = upgradeEl.dataset.upgradeId as UpgradeId;
     if (upgradeId) {
-      const success = purchaseUpgrade(state, upgradeId);
-      if (success) {
+      const upgrade = UPGRADES.find(u => u.id === upgradeId);
+      if (upgrade && state.tips >= upgrade.cost) {
+        state.tips -= upgrade.cost;
+        state.upgrades.push(upgradeId);
         audio.playUpgradeBuy();
+        refreshShop(state);
       }
-      renderGame(state);
     }
   });
 
