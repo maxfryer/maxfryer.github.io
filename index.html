@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tea For Two</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+  </head>
+  <body>
+    <div id="game">
+      <!-- Header -->
+      <header id="header">
+        <span id="day-display">Day 1</span>
+        <span id="tips-display">Tips: $0</span>
+        <span id="time-display">Time: 3:00</span>
+      </header>
+
+      <!-- Customer Queue -->
+      <section id="customer-queue">
+        <div class="customer-slot" data-slot="0"></div>
+        <div class="customer-slot" data-slot="1"></div>
+        <div class="customer-slot" data-slot="2"></div>
+        <div class="customer-slot" data-slot="3"></div>
+      </section>
+
+      <!-- Tea Stations -->
+      <section id="stations">
+        <div class="station" data-station="0">
+          <div class="station-label">Station 1</div>
+          <div class="station-top">
+            <div class="kettle" data-action="kettle">
+              <div class="kettle-body"></div>
+              <div class="kettle-status">Empty</div>
+            </div>
+            <div class="cup" data-action="cup">
+              <div class="cup-body">
+                <div class="cup-contents"></div>
+              </div>
+              <div class="cup-status">Empty</div>
+            </div>
+          </div>
+          <div class="station-bottom">
+            <div class="teabags">
+              <div class="teabag" data-tea="earl_grey" data-action="teabag">EG</div>
+              <div class="teabag" data-tea="english" data-action="teabag">EB</div>
+              <div class="teabag" data-tea="peppermint" data-action="teabag">PM</div>
+              <div class="teabag" data-tea="chai" data-action="teabag">CH</div>
+            </div>
+            <div class="additions">
+              <div class="addition" data-action="sugar">Sugar</div>
+              <div class="addition" data-action="milk">Milk</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="station" data-station="1">
+          <div class="station-label">Station 2</div>
+          <div class="station-top">
+            <div class="kettle" data-action="kettle">
+              <div class="kettle-body"></div>
+              <div class="kettle-status">Empty</div>
+            </div>
+            <div class="cup" data-action="cup">
+              <div class="cup-body">
+                <div class="cup-contents"></div>
+              </div>
+              <div class="cup-status">Empty</div>
+            </div>
+          </div>
+          <div class="station-bottom">
+            <div class="teabags">
+              <div class="teabag" data-tea="earl_grey" data-action="teabag">EG</div>
+              <div class="teabag" data-tea="english" data-action="teabag">EB</div>
+              <div class="teabag" data-tea="peppermint" data-action="teabag">PM</div>
+              <div class="teabag" data-tea="chai" data-action="teabag">CH</div>
+            </div>
+            <div class="additions">
+              <div class="addition" data-action="sugar">Sugar</div>
+              <div class="addition" data-action="milk">Milk</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Upgrade Shop (hidden by default) -->
+      <section id="shop" class="hidden">
+        <h2>End of Day</h2>
+        <p id="shop-tips">Tips earned: $0</p>
+        <div id="upgrades"></div>
+        <button id="next-day-btn">Start Next Day</button>
+      </section>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
