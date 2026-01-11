@@ -378,6 +378,71 @@ body {
 .addition[data-action="sugar"] { color: #fff; }
 .addition[data-action="milk"] { color: var(--milk); }
 
+/* Restart Confirmation */
+#restart-confirm {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 150;
+}
+
+#restart-confirm.hidden {
+  display: none;
+}
+
+.confirm-box {
+  background: var(--bg-medium);
+  border: 4px solid var(--accent);
+  padding: 24px;
+  text-align: center;
+}
+
+.confirm-box h2 {
+  font-size: 16px;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.confirm-box p {
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-bottom: 20px;
+}
+
+.confirm-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.confirm-buttons button {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 10px;
+  padding: 12px 20px;
+  border: 4px solid var(--text-dim);
+  cursor: pointer;
+  background: var(--bg-dark);
+  color: var(--text);
+}
+
+.confirm-buttons button:hover {
+  border-color: var(--gold);
+}
+
+#restart-yes {
+  border-color: var(--accent);
+}
+
+#restart-yes:hover {
+  background: var(--accent);
+}
+
 /* Pause Screen */
 #pause {
   position: fixed;

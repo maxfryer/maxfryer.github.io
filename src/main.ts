@@ -7,6 +7,7 @@ import { renderGame, showTipPopup } from './render';
 
 let state: GameState;
 let lastTime = 0;
+let showRestartConfirm = false;
 
 function init(): void {
   state = createGameState();
@@ -115,8 +116,41 @@ function setupEventListeners(): void {
     }
   });
 
+  // Restart confirmation handlers
+  const restartConfirm = document.getElementById('restart-confirm')!;
+  document.getElementById('restart-yes')!.addEventListener('click', confirmRestart);
+  document.getElementById('restart-no')!.addEventListener('click', cancelRestart);
+
+  function showRestart(): void {
+    showRestartConfirm = true;
+    restartConfirm.classList.remove('hidden');
+  }
+
+  function cancelRestart(): void {
+    showRestartConfirm = false;
+    restartConfirm.classList.add('hidden');
+  }
+
+  function confirmRestart(): void {
+    showRestartConfirm = false;
+    restartConfirm.classList.add('hidden');
+    state = createGameState();
+  }
+
   // Keyboard controls
   document.addEventListener('keydown', (e) => {
+    // Handle restart confirmation first
+    if (showRestartConfirm) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        cancelRestart();
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        confirmRestart();
+      }
+      return;
+    }
+
     if (e.key === 'Escape') {
       state.servingFromStation = null;
     }
@@ -129,6 +163,12 @@ function setupEventListeners(): void {
       } else if (state.phase === 'paused') {
         state.phase = 'playing';
       }
+    }
+
+    // Restart with R (not during shop)
+    if ((e.key === 'r' || e.key === 'R') && state.phase !== 'shopping') {
+      e.preventDefault();
+      showRestart();
     }
   });
 }
