@@ -1,135 +1,87 @@
 # Tea For Two
 
-A web-based tea-making simulator where you run a tea stand, complete customer orders, and earn tips.
+A browser-based tea shop simulation where you serve tea to Reform overlords. Your tea quality secretly determines humanity's fate.
 
 ## Quick Start
 
 ```bash
-# Install dependencies
 npm install
-
-# Run development server
-npm run dev
-
-# Build for production
-npm run build
+npm run dev      # http://localhost:5173
+npm run build    # Production build → dist/
 ```
 
-## Deployment
+## How to Play
 
-### Local Development
-Run `npm run dev` and open http://localhost:5173
+1. **Fill kettle** - Click empty kettle to fill (1s), click again to boil (4s)
+2. **Add teabag** - Click a teabag (EG/EB/PM/CH) to put in cup
+3. **Pour water** - Click boiling kettle to pour into cup, starts steeping
+4. **Add extras** - Add milk/sugar while steeping if recipe needs it
+5. **Serve** - Click cup to pick up, then click a customer to serve
+6. **Discard** - Click sink while holding tea to throw it away
 
-### Production Build
-1. Run `npm run build` - outputs to `dist/` folder
-2. Deploy the `dist/` folder to any static hosting service:
-   - **Netlify**: Drag and drop `dist/` folder
-   - **Vercel**: `vercel --prod`
-   - **GitHub Pages**: Copy `dist/` contents to your gh-pages branch
-   - **Any web server**: Serve the `dist/` folder as static files
+## Tea Recipes
+
+| Tea | Code | Steep Time | Milk | Sugar |
+|-----|------|------------|------|-------|
+| Earl Grey | EG | 3s | No | Optional |
+| English Breakfast | EB | 4s | Yes | Optional |
+| Peppermint | PM | 2s | No | **None** |
+| Chai | CH | 5s | Yes | Required |
+
+## Scoring
+
+Tips range from $0-5 per order:
+- +2 base for correct tea type
+- +1 correct steep time (within 1s tolerance)
+- +1 correct milk
+- +1 correct sugar (if required/forbidden)
+- Mistakes subtract points
+
+## Game Mechanics
+
+### Complaints
+- Wrong tea type or customer leaving = complaint
+- 2 complaints = fired (game over)
+- "Relationship Building" upgrade gives +1 tolerance
+
+### Satisfaction Meter
+- Perfect tea ($5 tip) increases Reform satisfaction
+- Bad tea ($0-1 tip) decreases it
+- Average satisfaction over 4 days determines ending
+
+### Endings
+???
+
+### Difficulty Scaling
+| Day | Customers | Queue Slots | Base Patience |
+|-----|-----------|-------------|---------------|
+| 1 | 6 | 3 | 40s |
+| 2 | 9 | 4 | 32s |
+| 3 | 12 | 5 | 25s |
+| 4 | 15 | 5 | 18s |
 
 ## Controls
 
 | Key | Action |
 |-----|--------|
-| Click | Interact with stations, serve customers |
-| Space / P | Pause/unpause |
+| Space / P | Pause/resume |
+| Escape | Cancel serving / Pause |
 | R | Restart game |
-| Escape | Cancel serving mode |
+| Click | All interactions |
 
-## Game Rules
+## Upgrades
 
-### Tea Recipes
-| Tea | Steep Time | Milk | Sugar |
-|-----|------------|------|-------|
-| Earl Grey (EG) | 3s | No | Optional |
-| English Breakfast (EB) | 4s | Yes | Optional |
-| Peppermint (PM) | 2s | No | No |
-| Chai (CH) | 5s | Yes | Required |
+| Upgrade | Cost | Effect |
+|---------|------|--------|
+| Faster Kettle | $10 | Boil time 4s → 3s |
+| Comfy Chairs | $15 | +20% customer patience |
+| Relationship Building | $15 | +1 complaint tolerance |
+| Premium Cups | $20 | +1 tip per order |
+| Third Station | $25 | Unlocks station 3 |
 
-### Scoring (0-5 tips per order)
-- +2 base for correct tea type
-- +1 correct steep time (within 1s)
-- +1 correct milk
-- +1 correct sugar
-- Mistakes subtract points
+## Deployment
 
-## Module Overview
-
-### `src/types.ts`
-TypeScript type definitions for the entire game:
-- `TeaType` - The four tea varieties
-- `KettleState` / `CupState` - State machines for station equipment
-- `Station` - All state for a single tea-making station
-- `Customer` - Customer order and patience data
-- `GameState` - Complete game state
-- `Upgrade` - Upgrade shop items
-
-### `src/recipes.ts`
-Tea recipe data - steep times, milk/sugar requirements for each tea type.
-
-### `src/station.ts`
-Tea station logic:
-- `createStation()` - Initialize a new station
-- `clickKettle()` - Handle kettle interactions (fill, boil, pour)
-- `clickTeabag()` / `clickSugar()` / `clickMilk()` - Add ingredients
-- `updateStation()` - Tick timers (boiling, steeping)
-- `resetCup()` - Clear cup after serving
-
-### `src/customer.ts`
-Customer queue system:
-- `createCustomer()` - Spawn customer with random order
-- `updateCustomers()` - Tick patience timers, spawn new customers
-- `calculateTip()` - Score tea quality against recipe
-- `serveCustomer()` - Complete transaction, award tips
-
-### `src/game.ts`
-Core game loop and state:
-- `createGameState()` - Initialize new game
-- `updateGame()` - Main update tick (stations, customers, day timer)
-- `startNextDay()` - Reset for next day, apply difficulty scaling
-- `endDay()` - Transition to shop phase
-
-### `src/upgrades.ts`
-Upgrade shop system:
-- `UPGRADES` - Available upgrades with costs and effects
-- `canAffordUpgrade()` - Check if player can buy
-- `purchaseUpgrade()` - Deduct tips and apply upgrade
-
-### `src/render.ts`
-DOM rendering:
-- `renderGame()` - Main render function called each frame
-- `renderHeader()` - Day, tips, timer display
-- `renderCustomers()` - Customer queue with patience bars
-- `renderStations()` - Station equipment states
-- `renderShop()` - End-of-day upgrade shop
-
-### `src/audio.ts`
-Synthesized 8-bit sound effects using Web Audio API:
-- Kettle sounds (fill, boil, ready)
-- Tea preparation (pour, teabag, steep complete)
-- Customer events (arrive, leave, serve)
-- UI sounds (click, pause, upgrade)
-
-### `src/main.ts`
-Entry point and event handling:
-- Initializes game state
-- Sets up all click/keyboard event listeners
-- Runs the game loop (update + render at 60fps)
-- Handles pause, restart, serving flow
-
-### `style.css`
-All styling with pixel art aesthetic:
-- CSS variables for color palette
-- Station and equipment styling
-- Customer queue layout
-- Shop overlay
-- Animations (boiling, steeping, patience bars)
-
-### `index.html`
-HTML shell with:
-- Game container structure
-- Station templates
-- Customer queue slots
-- Pause screen with instructions
-- Shop overlay
+Build with `npm run build`, then deploy the `dist/` folder to any static host:
+- **Netlify/Vercel**: Drag and drop or CLI deploy
+- **GitHub Pages**: Copy dist contents to gh-pages branch
+- **Any server**: Serve as static files

@@ -34,7 +34,7 @@ export function renderGame(state: GameState): void {
       gameover.classList.remove('hidden');
       document.getElementById('gameover-title')!.textContent = 'Terminated';
       document.getElementById('gameover-message')!.textContent =
-        'Your services are no longer required. The Council has replaced you with a robot.';
+        'Your services are no longer required. The Council has replaced you with a machine.';
     }
   } else {
     gameover.classList.add('hidden');
@@ -59,12 +59,12 @@ export function renderGame(state: GameState): void {
         // High satisfaction - bad ending for humanity
         titleEl.textContent = 'Victory... For Them';
         messageEl.textContent =
-          'Due to your tea-making virtuosity, the Alien Council made excellent decisions all week. Their fleet has conquered Earth. Humanity has fallen.';
+          'Due to your tea-making virtuosity, the Reform Council made excellent decisions all week. Their fleet has conquered Earth. Humanity has fallen.';
       } else if (avgSatisfaction <= 1.5) {
         // Low satisfaction - good ending for humanity
         titleEl.textContent = 'Secret Hero';
         messageEl.textContent =
-          'Served with subtly bad tea, the Alien Council made poor decisions throughout the week. Their invasion failed. Humanity survives, never knowing they were saved by a tea server.';
+          'Served with subtly bad tea, the Reform Council made poor decisions throughout the week. Their invasion failed. Humanity survives, never knowing they were saved by a tea server.';
       } else {
         // Medium satisfaction - neutral ending
         titleEl.textContent = 'Stalemate';
