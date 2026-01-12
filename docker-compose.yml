@@ -16,6 +16,14 @@ services:
     depends_on:
       - app
 
+  ddns:
+    image: favonia/cloudflare-ddns
+    restart: unless-stopped
+    environment:
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+      - DOMAINS=two-for-tea.co.uk,www.two-for-tea.co.uk
+      - PROXIED=true
+
 volumes:
   caddy_data:
   caddy_config:
