@@ -1,15 +1,26 @@
 import { Customer, TeaType, GameState, Station, MAX_WRONG_ORDERS } from './types';
+
+export function getMaxWrongOrders(state: GameState): number {
+  return state.upgrades.includes('relationship_building') ? MAX_WRONG_ORDERS + 1 : MAX_WRONG_ORDERS;
+}
 import { RECIPES, TEA_TYPES } from './recipes';
 
 let nextCustomerId = 0;
 
 export function getBasePatience(state: GameState): number {
-  const base = Math.max(20, 45 - (state.day - 1) * 5);
+  // More aggressive patience reduction: 40, 32, 25, 18
+  const base = Math.max(18, 40 - (state.day - 1) * 8);
   return state.upgrades.includes('patience_boost') ? base * 1.2 : base;
 }
 
 export function getCustomersPerDay(day: number): number {
-  return 6 + (day - 1) * 2;
+  // More customers per day: 6, 9, 12, 15
+  return 6 + (day - 1) * 3;
+}
+
+export function getSpawnInterval(day: number): number {
+  // Faster spawns as days progress: 5s, 4s, 3.5s, 3s
+  return Math.max(3, 5 - (day - 1) * 0.7);
 }
 
 export function getMaxQueueSize(day: number): number {
@@ -37,7 +48,7 @@ export function updateCustomers(state: GameState, dt: number): void {
   const impatientCustomers = state.customers.filter(c => c.patience <= 0).length;
   if (impatientCustomers > 0) {
     state.wrongOrdersToday += impatientCustomers;
-    if (state.wrongOrdersToday >= MAX_WRONG_ORDERS) {
+    if (state.wrongOrdersToday >= getMaxWrongOrders(state)) {
       state.phase = 'gameover';
     }
   }
@@ -48,8 +59,9 @@ export function updateCustomers(state: GameState, dt: number): void {
   // Spawn new customers if there's room and we haven't hit the daily limit
   const maxQueue = getMaxQueueSize(state.day);
   if (state.customers.length < maxQueue && state.customersServed + state.customers.length < state.customersTotal) {
-    // Random chance to spawn a new customer (average every 5 seconds)
-    if (Math.random() < dt / 5) {
+    // Random chance to spawn a new customer (faster on later days)
+    const spawnInterval = getSpawnInterval(state.day);
+    if (Math.random() < dt / spawnInterval) {
       state.customers.push(createCustomer(state));
     }
   }
@@ -111,7 +123,7 @@ export function serveCustomer(state: GameState, customerIndex: number): number {
   } else {
     // Track wrong orders
     state.wrongOrdersToday++;
-    if (state.wrongOrdersToday >= MAX_WRONG_ORDERS) {
+    if (state.wrongOrdersToday >= getMaxWrongOrders(state)) {
       state.phase = 'gameover';
     }
   }

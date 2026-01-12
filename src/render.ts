@@ -1,6 +1,6 @@
-import { GameState, Station, MAX_DAYS, MAX_WRONG_ORDERS } from './types';
+import { GameState, Station, MAX_DAYS } from './types';
 import { getKettleStatusText, getCupStatusText } from './station';
-import { getOrderDisplayName, getMaxQueueSize } from './customer';
+import { getOrderDisplayName, getMaxQueueSize, getMaxWrongOrders } from './customer';
 import { UPGRADES, canAffordUpgrade } from './upgrades';
 import { formatTime } from './game';
 
@@ -64,8 +64,9 @@ function renderHeader(state: GameState): void {
   // Show complaints as X icons
   const complaintsEl = document.getElementById('complaints-display');
   if (complaintsEl) {
+    const maxComplaints = getMaxWrongOrders(state);
     const filled = '<span class="complaint filled">X</span>'.repeat(state.wrongOrdersToday);
-    const empty = '<span class="complaint">X</span>'.repeat(MAX_WRONG_ORDERS - state.wrongOrdersToday);
+    const empty = '<span class="complaint">X</span>'.repeat(maxComplaints - state.wrongOrdersToday);
     complaintsEl.innerHTML = '<span class="complaints-label">Complaints:</span>' + filled + empty;
   }
 }
@@ -194,6 +195,9 @@ function renderStation(station: Station, el: HTMLElement, isServing: boolean): v
   if (station.cupTeaType) {
     cupClasses += ` ${station.cupTeaType}`;
   }
+  if (station.cupState === 'has_teabag') {
+    cupClasses += ' has-teabag';
+  }
   if (station.cupState === 'steeping' || station.cupState === 'ready') {
     cupClasses += ' has-tea';
   }
@@ -211,6 +215,9 @@ function renderStation(station: Station, el: HTMLElement, isServing: boolean): v
   }
   if (isServing && (station.cupState === 'steeping' || station.cupState === 'ready')) {
     cupClasses += ' serving';
+  }
+  if (station.teabagChangeTimer > 0) {
+    cupClasses += ' changing-teabag';
   }
   cupEl.className = cupClasses;
   el.querySelector('.cup-status')!.textContent = getCupStatusText(station);

@@ -8,6 +8,8 @@ export function createStation(id: number): Station {
     kettleTimer: 0,
     cupState: 'empty',
     cupTeaType: null,
+    pendingTeaType: null,
+    teabagChangeTimer: 0,
     steepTimer: 0,
     steepTarget: 0,
     hasMilk: false,
@@ -44,6 +46,10 @@ export function clickTeabag(station: Station, teaType: TeaType): void {
   if (station.cupState === 'empty') {
     station.cupState = 'has_teabag';
     station.cupTeaType = teaType;
+  } else if (station.cupState === 'has_teabag' && station.cupTeaType !== teaType && station.teabagChangeTimer === 0) {
+    // Allow changing teabag before water is added (takes 1 second)
+    station.pendingTeaType = teaType;
+    station.teabagChangeTimer = 1;
   }
 }
 
@@ -81,6 +87,18 @@ export function updateStation(station: Station, dt: number): void {
     }
   }
 
+  // Update teabag change timer
+  if (station.teabagChangeTimer > 0) {
+    station.teabagChangeTimer -= dt;
+    if (station.teabagChangeTimer <= 0) {
+      station.teabagChangeTimer = 0;
+      if (station.pendingTeaType) {
+        station.cupTeaType = station.pendingTeaType;
+        station.pendingTeaType = null;
+      }
+    }
+  }
+
   // Update steep timer
   if (station.cupState === 'steeping') {
     station.steepTimer += dt;
@@ -93,6 +111,8 @@ export function updateStation(station: Station, dt: number): void {
 export function resetCup(station: Station): void {
   station.cupState = 'empty';
   station.cupTeaType = null;
+  station.pendingTeaType = null;
+  station.teabagChangeTimer = 0;
   station.steepTimer = 0;
   station.steepTarget = 0;
   station.hasMilk = false;
@@ -110,6 +130,9 @@ export function getKettleStatusText(station: Station): string {
 }
 
 export function getCupStatusText(station: Station): string {
+  if (station.teabagChangeTimer > 0) {
+    return `Changing...`;
+  }
   switch (station.cupState) {
     case 'empty': return 'Empty';
     case 'has_teabag': return 'Add water';

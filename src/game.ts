@@ -42,7 +42,12 @@ export function updateGame(state: GameState, dt: number): void {
 }
 
 export function endDay(state: GameState): void {
-  state.phase = 'shopping';
+  // Skip shopping on final day - go straight to win
+  if (state.day >= MAX_DAYS) {
+    state.phase = 'won';
+  } else {
+    state.phase = 'shopping';
+  }
 }
 
 export function startNextDay(state: GameState): void {

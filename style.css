@@ -434,6 +434,34 @@ body {
 .cup.peppermint .cup-contents { background: var(--tea-peppermint); }
 .cup.chai .cup-contents { background: var(--tea-chai); }
 
+/* Teabag in cup (before water) - diamond shape */
+.cup.has-teabag .cup-body::before {
+  content: '';
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 14px;
+  height: 14px;
+  z-index: 2;
+}
+
+/* Tea type colors for teabag in cup */
+.cup.has-teabag.earl_grey .cup-body::before { background: #9b8b7a; }
+.cup.has-teabag.english .cup-body::before { background: #cd8c52; }
+.cup.has-teabag.peppermint .cup-body::before { background: #6dbb6f; }
+.cup.has-teabag.chai .cup-body::before { background: #e8a862; }
+
+/* Changing teabag animation */
+.cup.changing-teabag .cup-body::before {
+  animation: teabag-swap 0.3s ease-in-out infinite;
+}
+
+@keyframes teabag-swap {
+  0%, 100% { transform: translateX(-50%) rotate(40deg); }
+  50% { transform: translateX(-50%) rotate(50deg); }
+}
+
 .cup.has-milk.earl_grey .cup-contents { background: color-mix(in srgb, var(--tea-earl) 70%, var(--milk)); }
 .cup.has-milk.english .cup-contents { background: color-mix(in srgb, var(--tea-english) 70%, var(--milk)); }
 .cup.has-milk.peppermint .cup-contents { background: color-mix(in srgb, var(--tea-peppermint) 70%, var(--milk)); }
@@ -443,7 +471,7 @@ body {
   animation: steep 0.5s infinite;
 }
 
-/* Sugar cube and spoon */
+/* Sugar cubes floating in tea */
 .sugar-crystals {
   position: absolute;
   top: 0;
@@ -451,22 +479,42 @@ body {
   right: 0;
   bottom: 0;
   display: none;
+  pointer-events: none;
 }
 
 .cup.has-sugar.has-tea .sugar-crystals {
   display: block;
 }
 
-/* Sugar X symbol */
+/* Sugar cube - small white square */
 .sugar-crystals::before {
-  content: 'x';
+  content: '';
   position: absolute;
-  bottom: 2px;
+  bottom: 8px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 10px;
-  color: rgba(255, 255, 255, 0.9);
-  line-height: 1;
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(135deg, #fff 0%, #f0f0f0 50%, #ddd 100%);
+  border: 1px solid rgba(200, 200, 200, 0.8);
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.9),
+    1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Second sugar cube for visual interest */
+.sugar-crystals::after {
+  content: '';
+  position: absolute;
+  bottom: 12px;
+  left: calc(50% + 6px);
+  width: 6px;
+  height: 6px;
+  background: linear-gradient(135deg, #fff 0%, #f0f0f0 50%, #ddd 100%);
+  border: 1px solid rgba(200, 200, 200, 0.8);
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.9),
+    1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 

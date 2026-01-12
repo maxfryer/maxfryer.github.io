@@ -17,6 +17,8 @@ export interface Station {
   kettleTimer: number;
   cupState: CupState;
   cupTeaType: TeaType | null;
+  pendingTeaType: TeaType | null;
+  teabagChangeTimer: number;
   steepTimer: number;
   steepTarget: number;
   hasMilk: boolean;
@@ -50,7 +52,7 @@ export interface GameState {
   upgrades: UpgradeId[];
 }
 
-export type UpgradeId = 'faster_kettle' | 'third_station' | 'patience_boost' | 'premium_cups';
+export type UpgradeId = 'faster_kettle' | 'third_station' | 'patience_boost' | 'premium_cups' | 'relationship_building';
 
 export interface Upgrade {
   id: UpgradeId;

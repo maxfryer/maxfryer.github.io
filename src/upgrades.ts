@@ -24,6 +24,12 @@ export const UPGRADES: Upgrade[] = [
     name: 'Premium Cups',
     description: '+1 tip per order',
     cost: 20
+  },
+  {
+    id: 'relationship_building',
+    name: 'Relationship Building',
+    description: 'Customers forgive one extra mistake',
+    cost: 15
   }
 ];
 
