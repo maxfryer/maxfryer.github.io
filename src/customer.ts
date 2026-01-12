@@ -48,6 +48,8 @@ export function updateCustomers(state: GameState, dt: number): void {
   const impatientCustomers = state.customers.filter(c => c.patience <= 0).length;
   if (impatientCustomers > 0) {
     state.wrongOrdersToday += impatientCustomers;
+    // Decrease satisfaction for each impatient customer
+    state.satisfaction = Math.max(0, state.satisfaction - impatientCustomers);
     if (state.wrongOrdersToday >= getMaxWrongOrders(state)) {
       state.phase = 'gameover';
     }
@@ -127,6 +129,16 @@ export function serveCustomer(state: GameState, customerIndex: number): number {
       state.phase = 'gameover';
     }
   }
+
+  // Update satisfaction based on tip quality
+  if (tip >= 5) {
+    // Perfect tea - increase satisfaction
+    state.satisfaction = Math.min(4, state.satisfaction + 1);
+  } else if (tip <= 1) {
+    // Bad tea - decrease satisfaction
+    state.satisfaction = Math.max(0, state.satisfaction - 1);
+  }
+  // tip 2-4: no change
 
   // Remove customer and reset station
   state.customers.splice(customerIndex, 1);

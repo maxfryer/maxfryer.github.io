@@ -11,6 +11,7 @@ export function createGameState(): GameState {
     tips: 0,
     dayTips: 0,
     dayTimer: DAY_DURATION,
+    satisfaction: 2, // Start in the middle (0-4 scale)
     customersServed: 0,
     customersTotal: getCustomersPerDay(1),
     wrongOrdersToday: 0,

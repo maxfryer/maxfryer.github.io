@@ -43,6 +43,7 @@ export interface GameState {
   tips: number;
   dayTips: number;
   dayTimer: number;
+  satisfaction: number; // 0-4, where 0 is worst, 4 is best
   customersServed: number;
   customersTotal: number;
   wrongOrdersToday: number;

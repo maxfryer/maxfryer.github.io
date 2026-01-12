@@ -81,6 +81,40 @@ body {
   opacity: 1;
 }
 
+/* Satisfaction meter */
+#satisfaction-display {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.satisfaction-label {
+  color: var(--text-dim);
+  margin-right: 4px;
+}
+
+.satisfaction-bar {
+  width: 16px;
+  height: 12px;
+  border: 2px solid var(--text-dim);
+  opacity: 0.3;
+}
+
+.satisfaction-bar.filled {
+  opacity: 1;
+}
+
+/* Colors from red (bad) to green (good) */
+.satisfaction-bar.bar-0 { background: #e74c3c; border-color: #c0392b; }
+.satisfaction-bar.bar-1 { background: #e67e22; border-color: #d35400; }
+.satisfaction-bar.bar-2 { background: #f1c40f; border-color: #d4ac0d; }
+.satisfaction-bar.bar-3 { background: #9acd32; border-color: #7cb305; }
+.satisfaction-bar.bar-4 { background: #27ae60; border-color: #1e8449; }
+
+.satisfaction-bar:not(.filled) {
+  background: var(--bg-dark);
+}
+
 /* Customer Queue */
 #customer-queue {
   display: flex;

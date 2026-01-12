@@ -2,7 +2,6 @@ import { GameState, Station, MAX_DAYS } from './types';
 import { getKettleStatusText, getCupStatusText } from './station';
 import { getOrderDisplayName, getMaxQueueSize, getMaxWrongOrders } from './customer';
 import { UPGRADES, canAffordUpgrade } from './upgrades';
-import { formatTime } from './game';
 
 export function renderGame(state: GameState): void {
   renderHeader(state);
@@ -59,7 +58,17 @@ export function refreshShop(state: GameState): void {
 function renderHeader(state: GameState): void {
   document.getElementById('day-display')!.textContent = `Day ${state.day}/${MAX_DAYS}`;
   document.getElementById('tips-display')!.textContent = `Tips: $${state.tips}`;
-  document.getElementById('time-display')!.textContent = `Time: ${formatTime(state.dayTimer)}`;
+
+  // Render satisfaction meter (5 bars from red to green)
+  const satisfactionEl = document.getElementById('satisfaction-display');
+  if (satisfactionEl) {
+    let bars = '';
+    for (let i = 0; i < 5; i++) {
+      const filled = i <= state.satisfaction;
+      bars += `<span class="satisfaction-bar bar-${i} ${filled ? 'filled' : ''}"></span>`;
+    }
+    satisfactionEl.innerHTML = '<span class="satisfaction-label">Mood:</span>' + bars;
+  }
 
   // Show complaints as X icons
   const complaintsEl = document.getElementById('complaints-display');
