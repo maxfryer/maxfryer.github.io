@@ -4,21 +4,24 @@ import { updateCustomers, getCustomersPerDay } from './customer';
 
 const DAY_DURATION = 180; // 3 minutes per day
 
-export function createGameState(): GameState {
+export function createGameState(devMode: boolean = false): GameState {
   return {
     phase: 'playing',
     day: 1,
-    tips: 0,
+    tips: devMode ? 100 : 0,
     dayTips: 0,
     dayTimer: DAY_DURATION,
     satisfaction: 2, // Start in the middle (0-4 scale)
+    satisfactionSum: 0,
+    satisfactionSamples: 0,
     customersServed: 0,
-    customersTotal: getCustomersPerDay(1),
+    customersTotal: devMode ? 3 : getCustomersPerDay(1),
     wrongOrdersToday: 0,
     stations: [createStation(0), createStation(1)],
     customers: [],
     servingFromStation: null,
-    upgrades: []
+    upgrades: [],
+    devMode
   };
 }
 
@@ -63,7 +66,7 @@ export function startNextDay(state: GameState): void {
   state.dayTimer = DAY_DURATION;
   state.dayTips = 0;
   state.customersServed = 0;
-  state.customersTotal = getCustomersPerDay(state.day);
+  state.customersTotal = state.devMode ? 3 : getCustomersPerDay(state.day);
   state.wrongOrdersToday = 0;
   state.customers = [];
   state.servingFromStation = null;

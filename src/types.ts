@@ -44,6 +44,8 @@ export interface GameState {
   dayTips: number;
   dayTimer: number;
   satisfaction: number; // 0-4, where 0 is worst, 4 is best
+  satisfactionSum: number; // Running total for average calculation
+  satisfactionSamples: number; // Number of samples taken
   customersServed: number;
   customersTotal: number;
   wrongOrdersToday: number;
@@ -51,6 +53,7 @@ export interface GameState {
   customers: Customer[];
   servingFromStation: number | null;
   upgrades: UpgradeId[];
+  devMode: boolean;
 }
 
 export type UpgradeId = 'faster_kettle' | 'third_station' | 'patience_boost' | 'premium_cups' | 'relationship_building';

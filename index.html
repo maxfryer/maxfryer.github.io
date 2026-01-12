@@ -152,7 +152,10 @@
             <li><strong>Chai (CH):</strong> 5s + milk + sugar</li>
           </ul>
         </div>
-        <button id="mute-btn">Sound: ON</button>
+        <div class="pause-buttons">
+          <button id="mute-btn">Sound: ON</button>
+          <button id="dev-btn">Dev: OFF</button>
+        </div>
         <p class="resume-hint">Press SPACE, P or ESC to resume</p>
       </section>
 
@@ -160,22 +163,22 @@
       <section id="shop" class="hidden">
         <h2>End of Day</h2>
         <p id="shop-tips">Tips earned: $0</p>
+        <p id="shop-hint" class="shop-hint"></p>
         <div id="upgrades"></div>
         <button id="next-day-btn">Start Next Day</button>
       </section>
 
       <!-- Game Over Screen (hidden by default) -->
       <section id="gameover" class="hidden">
-        <h2>Game Over</h2>
-        <p class="gameover-reason">Too many complaints!</p>
-        <p id="gameover-stats">You made it to Day <span id="gameover-day">1</span> with $<span id="gameover-tips">0</span> in tips.</p>
+        <h2 id="gameover-title">Game Over</h2>
+        <p id="gameover-message" class="ending-message"></p>
         <button id="gameover-restart-btn">Try Again (R)</button>
       </section>
 
       <!-- Win Screen (hidden by default) -->
       <section id="win" class="hidden">
-        <h2>Congratulations!</h2>
-        <p class="win-message">You survived all 4 days!</p>
+        <h2 id="win-title">The End</h2>
+        <p id="win-message" class="ending-message"></p>
         <p id="win-stats">Final tips: $<span id="win-tips">0</span></p>
         <button id="win-restart-btn">Play Again (R)</button>
       </section>

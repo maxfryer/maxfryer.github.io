@@ -10,6 +10,7 @@ import { toggleMute } from './audio';
 let state: GameState;
 let lastTime = 0;
 let showRestartConfirm = false;
+let devMode = false;
 
 // Track previous states for sound triggers
 let prevKettleStates: string[] = [];
@@ -193,13 +194,26 @@ function setupEventListeners(): void {
   function confirmRestart(): void {
     showRestartConfirm = false;
     restartConfirm.classList.add('hidden');
-    state = createGameState();
+    state = createGameState(devMode);
     // Reset audio state trackers
     prevKettleStates = [];
     prevCupStates = [];
     prevCustomerCount = 0;
     prevPhase = 'playing';
   }
+
+  // Dev mode toggle
+  const devBtn = document.getElementById('dev-btn')!;
+  devBtn.addEventListener('click', () => {
+    devMode = !devMode;
+    devBtn.textContent = devMode ? 'Dev: ON' : 'Dev: OFF';
+    // Restart game with new mode
+    state = createGameState(devMode);
+    prevKettleStates = [];
+    prevCupStates = [];
+    prevCustomerCount = 0;
+    prevPhase = 'playing';
+  });
 
   // Keyboard controls
   document.addEventListener('keydown', (e) => {

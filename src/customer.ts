@@ -140,6 +140,10 @@ export function serveCustomer(state: GameState, customerIndex: number): number {
   }
   // tip 2-4: no change
 
+  // Track satisfaction for average calculation
+  state.satisfactionSum += state.satisfaction;
+  state.satisfactionSamples++;
+
   // Remove customer and reset station
   state.customers.splice(customerIndex, 1);
   state.customersServed++;

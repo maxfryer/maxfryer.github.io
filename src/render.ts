@@ -32,8 +32,9 @@ export function renderGame(state: GameState): void {
   if (state.phase === 'gameover') {
     if (gameover.classList.contains('hidden')) {
       gameover.classList.remove('hidden');
-      document.getElementById('gameover-day')!.textContent = String(state.day);
-      document.getElementById('gameover-tips')!.textContent = String(state.tips);
+      document.getElementById('gameover-title')!.textContent = 'Terminated';
+      document.getElementById('gameover-message')!.textContent =
+        'Your services are no longer required. The Council has replaced you with a robot.';
     }
   } else {
     gameover.classList.add('hidden');
@@ -45,6 +46,31 @@ export function renderGame(state: GameState): void {
     if (win.classList.contains('hidden')) {
       win.classList.remove('hidden');
       document.getElementById('win-tips')!.textContent = String(state.tips);
+
+      // Calculate average satisfaction
+      const avgSatisfaction = state.satisfactionSamples > 0
+        ? state.satisfactionSum / state.satisfactionSamples
+        : 2;
+
+      const titleEl = document.getElementById('win-title')!;
+      const messageEl = document.getElementById('win-message')!;
+
+      if (avgSatisfaction >= 3) {
+        // High satisfaction - bad ending for humanity
+        titleEl.textContent = 'Victory... For Them';
+        messageEl.textContent =
+          'Due to your tea-making virtuosity, the Alien Council made excellent decisions all week. Their fleet has conquered Earth. Humanity has fallen.';
+      } else if (avgSatisfaction <= 1.5) {
+        // Low satisfaction - good ending for humanity
+        titleEl.textContent = 'Secret Hero';
+        messageEl.textContent =
+          'Served with subtly bad tea, the Alien Council made poor decisions throughout the week. Their invasion failed. Humanity survives, never knowing they were saved by a tea server.';
+      } else {
+        // Medium satisfaction - neutral ending
+        titleEl.textContent = 'Stalemate';
+        messageEl.textContent =
+          'Your adequate tea led to adequate decisions. The war continues, neither side gaining advantage. The Council keeps you employed... for now.';
+      }
     }
   } else {
     win.classList.add('hidden');
@@ -148,6 +174,12 @@ function renderStations(state: GameState): void {
     }
   }
 
+  // Remove third station if upgrade not owned (e.g., after restart)
+  const existingStation3 = document.querySelector('[data-station="2"]');
+  if (existingStation3 && !state.upgrades.includes('third_station')) {
+    existingStation3.remove();
+  }
+
   // Add third station HTML if needed
   if (state.upgrades.includes('third_station') && !document.querySelector('[data-station="2"]')) {
     const stationHtml = `
@@ -232,8 +264,20 @@ function renderStation(station: Station, el: HTMLElement, isServing: boolean): v
   el.querySelector('.cup-status')!.textContent = getCupStatusText(station);
 }
 
+const DAY_HINTS = [
+  '"The Council seems pleased. Strange customers, though... their skin has an odd shimmer."',
+  '"Overheard them discussing \'the invasion timeline\'. Must be some corporate jargon."',
+  '"One of them slipped up and mentioned \'the human resistance\'. Probably a movie reference?"',
+];
+
 function renderShop(state: GameState): void {
   document.getElementById('shop-tips')!.textContent = `Tips: $${state.tips}`;
+
+  // Show hint based on day
+  const hintEl = document.getElementById('shop-hint');
+  if (hintEl && state.day <= DAY_HINTS.length) {
+    hintEl.textContent = DAY_HINTS[state.day - 1];
+  }
 
   const upgradesEl = document.getElementById('upgrades')!;
   upgradesEl.innerHTML = '';
