@@ -80,7 +80,7 @@ function setupEventListeners(): void {
         clickMilk(station);
         break;
       case 'cup':
-        if (station.cupState === 'ready') {
+        if (station.cupState === 'steeping' || station.cupState === 'ready') {
           audio.playClick();
           if (state.servingFromStation === stationIndex) {
             // Cancel serving mode
@@ -132,7 +132,7 @@ function setupEventListeners(): void {
     if (state.servingFromStation === null) return;
 
     const station = state.stations[state.servingFromStation];
-    if (station && station.cupState === 'ready') {
+    if (station && (station.cupState === 'steeping' || station.cupState === 'ready')) {
       audio.playDiscard();
       resetCup(station);
       state.servingFromStation = null;

@@ -209,7 +209,7 @@ function renderStation(station: Station, el: HTMLElement, isServing: boolean): v
   if (station.cupState === 'ready') {
     cupClasses += ' ready';
   }
-  if (isServing) {
+  if (isServing && (station.cupState === 'steeping' || station.cupState === 'ready')) {
     cupClasses += ' serving';
   }
   cupEl.className = cupClasses;

@@ -76,15 +76,15 @@ export function calculateTip(station: Station, recipe: typeof RECIPES[TeaType], 
   }
 
   // Check sugar
+  // required: must have sugar, none: must not have sugar, optional: doesn't matter
   if (recipe.sugar === 'required' && station.sugarCount > 0) {
     tip += 1;
   } else if (recipe.sugar === 'required' && station.sugarCount === 0) {
     tip -= 1;
   } else if (recipe.sugar === 'none' && station.sugarCount > 0) {
     tip -= 1;
-  } else if (recipe.sugar === 'optional') {
-    tip += 1; // Bonus for optional items handled correctly
   }
+  // optional: no bonus or penalty either way
 
   // Premium cups upgrade
   if (state.upgrades.includes('premium_cups')) {
