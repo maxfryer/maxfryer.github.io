@@ -57,19 +57,23 @@ export function renderGame(state: GameState): void {
 
       if (avgSatisfaction >= 3) {
         // High satisfaction - bad ending for humanity
-        titleEl.textContent = 'Victory... For Them';
+        titleEl.textContent = 'Victory... But At What Cost?';
         messageEl.textContent =
-          'Due to your tea-making virtuosity, the Reform Council made excellent decisions all week. Their fleet has conquered Earth. Humanity has fallen.';
-      } else if (avgSatisfaction <= 1.5) {
+          `Buoyed by your stellar brews, The Reform Party have triumphed in the election! Up the Ra! Prime minister Farage
+          needs a personal brewmaster, and you're the one for the job!`;
+      } else if (avgSatisfaction <= 2.5) {
         // Low satisfaction - good ending for humanity
-        titleEl.textContent = 'Secret Hero';
+        titleEl.textContent = '';
         messageEl.textContent =
-          'Served with subtly bad tea, the Reform Council made poor decisions throughout the week. Their invasion failed. Humanity survives, never knowing they were saved by a tea server.';
+          `Something was off this week, but no one can quite put a finger on what... Some people point to the peculiar tasting
+          tea, but there aren't enough formal complaints to investigate further. Regardless, The Reform Party loses the upcoming 
+          general election and slide back into obscurity. Farage moves to Russia to pursue a career in competitive bear wrestling.`;
       } else {
         // Medium satisfaction - neutral ending
         titleEl.textContent = 'Stalemate';
         messageEl.textContent =
-          'Your adequate tea led to adequate decisions. The war continues, neither side gaining advantage. The Council keeps you employed... for now.';
+          `Your tea service was... adequate. The Reform Party manage to get enough votes to form a coalition government.
+          No one's happy. The future remains uncertain. At least you made some decent tips along the way.`;
       }
     }
   } else {
