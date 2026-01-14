@@ -4,6 +4,10 @@ import { updateCustomers, getCustomersPerDay } from './customer';
 
 const DAY_DURATION = 180; // 3 minutes per day
 
+export function getBaseMood(state: GameState): number {
+  return state.upgrades.includes('relationship_building') ? 7 : 5;
+}
+
 export function createGameState(devMode: boolean = false): GameState {
   return {
     phase: 'playing',
@@ -11,12 +15,11 @@ export function createGameState(devMode: boolean = false): GameState {
     tips: devMode ? 100 : 0,
     dayTips: 0,
     dayTimer: DAY_DURATION,
-    satisfaction: 2, // Start in the middle (0-4 scale)
+    satisfaction: 5, // Start at baseline (0-7 scale, game over if < 1)
     satisfactionSum: 0,
     satisfactionSamples: 0,
     customersServed: 0,
     customersTotal: devMode ? 3 : getCustomersPerDay(1),
-    wrongOrdersToday: 0,
     stations: [createStation(0), createStation(1)],
     customers: [],
     servingFromStation: null,
@@ -67,9 +70,12 @@ export function startNextDay(state: GameState): void {
   state.dayTips = 0;
   state.customersServed = 0;
   state.customersTotal = state.devMode ? 3 : getCustomersPerDay(state.day);
-  state.wrongOrdersToday = 0;
   state.customers = [];
   state.servingFromStation = null;
+
+  // Floor reset: mood resets to baseline if below, but keeps gains if above
+  const baseline = getBaseMood(state);
+  state.satisfaction = Math.max(baseline, state.satisfaction);
 
   // Reset all stations
   for (const station of state.stations) {

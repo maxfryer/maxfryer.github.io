@@ -1,6 +1,7 @@
 import { GameState, Station, MAX_DAYS } from './types';
 import { getKettleStatusText, getCupStatusText } from './station';
-import { getOrderDisplayName, getMaxQueueSize, getMaxWrongOrders } from './customer';
+import { getOrderDisplayName, getMaxQueueSize } from './customer';
+import { getBaseMood } from './game';
 import { UPGRADES, canAffordUpgrade } from './upgrades';
 
 export function renderGame(state: GameState): void {
@@ -47,26 +48,26 @@ export function renderGame(state: GameState): void {
       win.classList.remove('hidden');
       document.getElementById('win-tips')!.textContent = String(state.tips);
 
-      // Calculate average satisfaction
+      // Calculate average satisfaction (0-7 scale)
       const avgSatisfaction = state.satisfactionSamples > 0
         ? state.satisfactionSum / state.satisfactionSamples
-        : 2;
+        : 3.5;
 
       const titleEl = document.getElementById('win-title')!;
       const messageEl = document.getElementById('win-message')!;
 
-      if (avgSatisfaction >= 3) {
+      if (avgSatisfaction >= 5.25) {
         // High satisfaction - bad ending for humanity
         titleEl.textContent = 'Victory... But At What Cost?';
         messageEl.textContent =
           `Buoyed by your stellar brews, The Reform Party have triumphed in the election! Up the Ra! Prime minister Farage
           needs a personal brewmaster, and you're the one for the job!`;
-      } else if (avgSatisfaction <= 2.5) {
+      } else if (avgSatisfaction <= 4.375) {
         // Low satisfaction - good ending for humanity
         titleEl.textContent = '';
         messageEl.textContent =
           `Something was off this week, but no one can quite put a finger on what... Some people point to the peculiar tasting
-          tea, but there aren't enough formal complaints to investigate further. Regardless, The Reform Party loses the upcoming 
+          tea, but there aren't enough formal complaints to investigate further. Regardless, The Reform Party loses the upcoming
           general election and slide back into obscurity. Farage moves to Russia to pursue a career in competitive bear wrestling.`;
       } else {
         // Medium satisfaction - neutral ending
@@ -89,24 +90,16 @@ function renderHeader(state: GameState): void {
   document.getElementById('day-display')!.textContent = `Day ${state.day}/${MAX_DAYS}`;
   document.getElementById('tips-display')!.textContent = `Tips: $${state.tips}`;
 
-  // Render satisfaction meter (5 bars from red to green)
+  // Render satisfaction meter (7 bars from red to green, scales with upgrade)
   const satisfactionEl = document.getElementById('satisfaction-display');
   if (satisfactionEl) {
+    const maxMood = getBaseMood(state);
     let bars = '';
-    for (let i = 0; i < 5; i++) {
-      const filled = i <= state.satisfaction;
-      bars += `<span class="satisfaction-bar bar-${i} ${filled ? 'filled' : ''}"></span>`;
+    for (let i = 0; i < maxMood; i++) {
+      const filled = i < state.satisfaction;
+      bars += `<span class="satisfaction-bar bar-${Math.floor(i * 5 / maxMood)} ${filled ? 'filled' : ''}"></span>`;
     }
     satisfactionEl.innerHTML = '<span class="satisfaction-label">Mood:</span>' + bars;
-  }
-
-  // Show complaints as X icons
-  const complaintsEl = document.getElementById('complaints-display');
-  if (complaintsEl) {
-    const maxComplaints = getMaxWrongOrders(state);
-    const filled = '<span class="complaint filled">X</span>'.repeat(state.wrongOrdersToday);
-    const empty = '<span class="complaint">X</span>'.repeat(maxComplaints - state.wrongOrdersToday);
-    complaintsEl.innerHTML = '<span class="complaints-label">Complaints:</span>' + filled + empty;
   }
 }
 
@@ -124,9 +117,26 @@ function renderCustomers(state: GameState): void {
     }
   }
 
+  // Show recipe card on day 1, hide on later days
+  const recipeCard = document.getElementById('queue-recipe-card');
+  if (recipeCard) {
+    if (state.day === 1) {
+      recipeCard.classList.remove('hidden');
+    } else {
+      recipeCard.classList.add('hidden');
+    }
+  }
+
   slots.forEach((slot, index) => {
     const customer = state.customers[index];
     const slotEl = slot as HTMLElement;
+
+    // On day 1, hide slots 3-4 (they're replaced by recipe card)
+    if (state.day === 1 && index >= 3) {
+      slotEl.classList.add('hidden');
+      return;
+    }
+    slotEl.classList.remove('hidden');
 
     // Check if slot is unavailable for this day
     if (index >= maxQueue) {
@@ -167,16 +177,6 @@ function renderCustomers(state: GameState): void {
 
 function renderStations(state: GameState): void {
   const stationsEl = document.getElementById('stations')!;
-
-  // Show/hide locked station 3 placeholder
-  const lockedStation3 = document.getElementById('station-3-locked');
-  if (lockedStation3) {
-    if (state.upgrades.includes('third_station')) {
-      lockedStation3.classList.add('hidden');
-    } else {
-      lockedStation3.classList.remove('hidden');
-    }
-  }
 
   // Remove third station if upgrade not owned (e.g., after restart)
   const existingStation3 = document.querySelector('[data-station="2"]');

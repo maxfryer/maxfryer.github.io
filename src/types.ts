@@ -35,7 +35,6 @@ export interface Customer {
 export type GamePhase = 'playing' | 'shopping' | 'paused' | 'gameover' | 'won';
 
 export const MAX_DAYS = 4;
-export const MAX_WRONG_ORDERS = 2;
 
 export interface GameState {
   phase: GamePhase;
@@ -43,12 +42,11 @@ export interface GameState {
   tips: number;
   dayTips: number;
   dayTimer: number;
-  satisfaction: number; // 0-4, where 0 is worst, 4 is best
+  satisfaction: number; // 0-7 scale, game over if < 1
   satisfactionSum: number; // Running total for average calculation
   satisfactionSamples: number; // Number of samples taken
   customersServed: number;
   customersTotal: number;
-  wrongOrdersToday: number;
   stations: Station[];
   customers: Customer[];
   servingFromStation: number | null;

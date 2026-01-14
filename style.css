@@ -59,28 +59,6 @@ body {
   color: var(--gold);
 }
 
-#complaints-display {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.complaints-label {
-  color: var(--text-dim);
-  margin-right: 2px;
-}
-
-.complaint {
-  font-size: 10px;
-  color: var(--text-dim);
-  opacity: 0.3;
-}
-
-.complaint.filled {
-  color: var(--accent);
-  opacity: 1;
-}
-
 /* Satisfaction meter */
 #satisfaction-display {
   display: flex;
@@ -160,6 +138,10 @@ body {
 
 .customer-slot.unavailable:hover {
   background: transparent;
+}
+
+.customer-slot.hidden {
+  display: none;
 }
 
 .slot-locked {
@@ -276,13 +258,22 @@ body {
   pointer-events: none;
 }
 
-.station.recipe-card {
-  opacity: 1;
-  pointer-events: none;
+.station.locked.hidden {
+  display: none;
 }
 
-.station.recipe-card.hidden,
-.station.locked.hidden {
+/* Queue Recipe Card (shows on day 1 only) */
+#queue-recipe-card {
+  flex: 2;
+  background: var(--bg-medium);
+  border: 4px solid var(--bg-light);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#queue-recipe-card.hidden {
   display: none;
 }
 

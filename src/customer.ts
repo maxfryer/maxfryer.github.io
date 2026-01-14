@@ -1,8 +1,4 @@
-import { Customer, TeaType, GameState, Station, MAX_WRONG_ORDERS } from './types';
-
-export function getMaxWrongOrders(state: GameState): number {
-  return state.upgrades.includes('relationship_building') ? MAX_WRONG_ORDERS + 1 : MAX_WRONG_ORDERS;
-}
+import { Customer, TeaType, GameState, Station } from './types';
 import { RECIPES, TEA_TYPES } from './recipes';
 
 let nextCustomerId = 0;
@@ -44,13 +40,11 @@ export function updateCustomers(state: GameState, dt: number): void {
     customer.patience -= dt;
   }
 
-  // Count customers who ran out of patience (complaints)
+  // Count customers who ran out of patience - each costs 2 mood points
   const impatientCustomers = state.customers.filter(c => c.patience <= 0).length;
   if (impatientCustomers > 0) {
-    state.wrongOrdersToday += impatientCustomers;
-    // Decrease satisfaction for each impatient customer
-    state.satisfaction = Math.max(0, state.satisfaction - impatientCustomers);
-    if (state.wrongOrdersToday >= getMaxWrongOrders(state)) {
+    state.satisfaction = Math.max(0, state.satisfaction - impatientCustomers * 2);
+    if (state.satisfaction < 1) {
       state.phase = 'gameover';
     }
   }
@@ -122,23 +116,22 @@ export function serveCustomer(state: GameState, customerIndex: number): number {
 
   if (!isWrongOrder) {
     tip = calculateTip(station, RECIPES[customer.order], state);
+    // Update satisfaction based on tip quality (only for correct orders)
+    if (tip >= 5) {
+      // Perfect tea - increase satisfaction
+      state.satisfaction = Math.min(7, state.satisfaction + 1);
+    } else if (tip <= 1) {
+      // Bad tea - decrease satisfaction
+      state.satisfaction = Math.max(0, state.satisfaction - 1);
+    }
+    // tip 2-4: no change
   } else {
-    // Track wrong orders
-    state.wrongOrdersToday++;
-    if (state.wrongOrdersToday >= getMaxWrongOrders(state)) {
+    // Wrong order costs 2 mood points (capped at -2 per customer)
+    state.satisfaction = Math.max(0, state.satisfaction - 2);
+    if (state.satisfaction < 1) {
       state.phase = 'gameover';
     }
   }
-
-  // Update satisfaction based on tip quality
-  if (tip >= 5) {
-    // Perfect tea - increase satisfaction
-    state.satisfaction = Math.min(4, state.satisfaction + 1);
-  } else if (tip <= 1) {
-    // Bad tea - decrease satisfaction
-    state.satisfaction = Math.max(0, state.satisfaction - 1);
-  }
-  // tip 2-4: no change
 
   // Track satisfaction for average calculation
   state.satisfactionSum += state.satisfaction;

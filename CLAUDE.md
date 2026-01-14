@@ -59,9 +59,11 @@ Equipment uses explicit state transitions:
 - Base patience: max(18, 40 - (day-1) * 8)
 - Spawn interval: max(3, 5 - (day-1) * 0.7)
 
-**Complaints**:
-- Wrong tea type or customer leaving = +1 complaint
-- 2 complaints = game over (3 with upgrade)
+**Mood System**:
+- Wrong tea type or customer timeout = -2 mood
+- Mood < 1 = game over
+- Baseline mood: 5 (7 with upgrade) allows 2 mistakes per day (3 with upgrade)
+- At day start: mood resets to baseline if below, keeps gains if above
 
 ### Rendering Notes
 

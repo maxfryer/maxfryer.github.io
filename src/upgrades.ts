@@ -28,7 +28,7 @@ export const UPGRADES: Upgrade[] = [
   {
     id: 'relationship_building',
     name: 'Relationship Building',
-    description: 'Customers forgive one extra mistake',
+    description: 'Start each day with extra patience buffer',
     cost: 15
   }
 ];

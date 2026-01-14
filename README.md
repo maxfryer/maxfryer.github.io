@@ -39,15 +39,15 @@ Tips range from $0-5 per order:
 
 ## Game Mechanics
 
-### Complaints
-- Wrong tea type or customer leaving = complaint
-- 2 complaints = fired (game over)
-- "Relationship Building" upgrade gives +1 tolerance
-
-### Satisfaction Meter
-- Perfect tea ($5 tip) increases Reform satisfaction
-- Bad tea ($0-1 tip) decreases it
-- Average satisfaction over 4 days determines ending
+### Mood System
+- Wrong tea type or customer timeout = -2 mood
+- Mood < 1 = game over
+- Baseline: 5 (allows 2 mistakes per day)
+- "Relationship Building" upgrade: baseline 7 (allows 3 mistakes)
+- Mood resets to baseline each day if below, keeps gains if above
+- Perfect tea ($5 tip) increases mood by 1
+- Bad tea ($0-1 tip) decreases mood by 1
+- Average mood over 4 days determines ending
 
 ### Endings
 ???

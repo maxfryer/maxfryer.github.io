@@ -15,7 +15,6 @@
       <header id="header">
         <span id="day-display">Day 1/4</span>
         <span id="tips-display">Tips: $0</span>
-        <span id="complaints-display"><span class="complaints-label">Complaints:</span><span class="complaint">X</span><span class="complaint">X</span></span>
         <span id="satisfaction-display"></span>
       </header>
 
@@ -26,6 +25,31 @@
         <div class="customer-slot" data-slot="2"></div>
         <div class="customer-slot" data-slot="3"></div>
         <div class="customer-slot" data-slot="4"></div>
+        <div id="queue-recipe-card">
+          <div class="recipe-title">Menu</div>
+          <div class="recipe-list">
+            <div class="recipe-item">
+              <span class="recipe-name eg">Earl Grey</span>
+              <span class="recipe-eq">=</span>
+              <span class="recipe-details">3s</span>
+            </div>
+            <div class="recipe-item">
+              <span class="recipe-name eb">Eng Breakfast</span>
+              <span class="recipe-eq">=</span>
+              <span class="recipe-details">4s + Milk</span>
+            </div>
+            <div class="recipe-item">
+              <span class="recipe-name pm">Peppermint</span>
+              <span class="recipe-eq">=</span>
+              <span class="recipe-details">2s, no Sugar</span>
+            </div>
+            <div class="recipe-item">
+              <span class="recipe-name ch">Chai</span>
+              <span class="recipe-eq">=</span>
+              <span class="recipe-details">5s + Milk + Sugar</span>
+            </div>
+          </div>
+        </div>
         <div id="sink" title="Pour out tea">
           <div class="sink-icon">X</div>
           <div class="sink-label">Sink</div>
@@ -92,31 +116,6 @@
           </div>
         </div>
 
-        <div class="station recipe-card" id="station-3-locked">
-          <div class="recipe-title">Menu</div>
-          <div class="recipe-list">
-            <div class="recipe-item">
-              <span class="recipe-name eg">Earl Grey</span>
-              <span class="recipe-eq">=</span>
-              <span class="recipe-details">3s</span>
-            </div>
-            <div class="recipe-item">
-              <span class="recipe-name eb">Eng Breakfast</span>
-              <span class="recipe-eq">=</span>
-              <span class="recipe-details">4s + Milk</span>
-            </div>
-            <div class="recipe-item">
-              <span class="recipe-name pm">Peppermint</span>
-              <span class="recipe-eq">=</span>
-              <span class="recipe-details">2s, no Sugar</span>
-            </div>
-            <div class="recipe-item">
-              <span class="recipe-name ch">Chai</span>
-              <span class="recipe-eq">=</span>
-              <span class="recipe-details">5s + Milk + Sugar</span>
-            </div>
-          </div>
-        </div>
       </section>
 
       <!-- Restart Confirmation (hidden by default) -->
